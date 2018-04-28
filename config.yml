@@ -1,2 +1,5 @@
 
-VERSION: 1
+SERVER_ADDRESS: 127.0.0.1 # 客户端链接服务器时的地址
+SERVER_PORT: 6543 # 服务器端口号
+SECRET_KEY: this is the secret key # 用于AES加密
+MTU: 4096 # 单个数据包的最大数据量

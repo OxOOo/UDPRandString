@@ -450,7 +450,7 @@ void inv_cipher(uint8_t *in, uint8_t *out, uint8_t *w) {
 	}
 }
 
-void aes_encode(uint8_t* key, size_t keylen, uint8_t* in, size_t inlen, uint8_t* out)
+void aes_encode(const uint8_t* key, size_t keylen, const uint8_t* in, size_t inlen, uint8_t* out)
 {
 	if (keylen != 32) {
 		fprintf(stderr, "aes_encode: keylen must equal 32\n");
@@ -462,16 +462,16 @@ void aes_encode(uint8_t* key, size_t keylen, uint8_t* in, size_t inlen, uint8_t*
 	}
 
 	uint8_t* w = (uint8_t*)malloc(Nb*(Nr+1)*4);; // expanded key
-	key_expansion(key, w);
+	key_expansion(const_cast<uint8_t*>(key), w);
 
 	for(size_t offset = 0; offset < inlen; offset += 16) {
-		cipher(in+offset /* in */, out+offset /* out */, w /* expanded key */);
+		cipher(const_cast<uint8_t*>(in)+offset /* in */, out+offset /* out */, w /* expanded key */);
 	}
 
 	free(w);
 }
 
-void aes_decode(uint8_t* key, size_t keylen, uint8_t* in, size_t inlen, uint8_t* out)
+void aes_decode(const uint8_t* key, size_t keylen, const uint8_t* in, size_t inlen, uint8_t* out)
 {
 	if (keylen != 32) {
 		fprintf(stderr, "aes_decode: keylen must equal 32\n");
@@ -483,10 +483,10 @@ void aes_decode(uint8_t* key, size_t keylen, uint8_t* in, size_t inlen, uint8_t*
 	}
 
 	uint8_t* w = (uint8_t*)malloc(Nb*(Nr+1)*4);; // expanded key
-	key_expansion(key, w);
+	key_expansion(const_cast<uint8_t*>(key), w);
 
 	for(size_t offset = 0; offset < inlen; offset += 16) {
-		inv_cipher(in+offset /* in */, out+offset /* out */, w /* expanded key */);
+		inv_cipher(const_cast<uint8_t*>(in)+offset /* in */, out+offset /* out */, w /* expanded key */);
 	}
 
 	free(w);
