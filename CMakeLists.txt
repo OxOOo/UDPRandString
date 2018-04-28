@@ -1,0 +1,32 @@
+project(udp-rand-string)
+cmake_minimum_required(VERSION 3.5)
+
+include_directories(src)
+include_directories(unp)
+include_directories(plog/include)
+include_directories(yaml-cpp/include)
+
+file(GLOB UNP_SOURCES unp/*.c)
+add_library(unp ${UNP_SOURCES})
+target_compile_options(unp PRIVATE -lpthread)
+
+file(GLOB YAML_SOURCES yaml-cpp/src/*.cpp)
+file(GLOB YAML_CONTRIB_SOURCES yaml-cpp/src/contrib/*.cpp)
+add_library(yaml-cpp ${YAML_SOURCES} ${YAML_CONTRIB_SOURCES})
+target_compile_options(yaml-cpp PRIVATE --std=c++14)
+
+file(GLOB SRC_SOURCES src/*.cpp)
+add_library(src ${SRC_SOURCES})
+target_link_libraries(src unp yaml-cpp)
+target_compile_options(src PUBLIC --std=c++14 -Wall)
+
+add_executable(server apps/server.cpp)
+target_link_libraries(server src)
+add_executable(client apps/client.cpp)
+target_link_libraries(client src)
+add_executable(test_aes apps/test_aes.cpp)
+target_link_libraries(test_aes src)
+add_executable(test_crc apps/test_crc.cpp)
+target_link_libraries(test_crc src)
+add_executable(test_yaml apps/test_yaml.cpp)
+target_link_libraries(test_yaml src yaml-cpp)
