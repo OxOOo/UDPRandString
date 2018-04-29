@@ -101,7 +101,7 @@ UDPServer::task_ptr UDPServer::BuildTask(Request req, SA* cliaddr, socklen_t cli
     task->res_size = req.req_size;
     while(task->res_size % 10) task->res_size ++; // 10字节对齐,便于拆分chunk
 
-    task->group_size = min(30, task->res_size);
+    task->group_size = min(1000, task->res_size);
     task->chunk_count = 10;
     task->chunk_size = task->group_size / task->chunk_count;
     task->curr_chunk_id = 0;
