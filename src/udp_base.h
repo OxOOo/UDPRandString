@@ -10,6 +10,8 @@ public:
     UDPBase(const Config& config);
     virtual ~UDPBase();
 
+    virtual void Run() = 0;
+
 protected:
     const Config config;
 

@@ -242,8 +242,8 @@ struct sockaddr_storage {
 
 typedef	void	Sigfunc(int);	/* for signal handlers */
 
-#define	min(a,b)	((a) < (b) ? (a) : (b))
-#define	max(a,b)	((a) > (b) ? (a) : (b))
+// #define	min(a,b)	((a) < (b) ? (a) : (b))
+// #define	max(a,b)	((a) > (b) ? (a) : (b))
 
 #ifndef	HAVE_ADDRINFO_STRUCT
 #include	"addrinfo.h"

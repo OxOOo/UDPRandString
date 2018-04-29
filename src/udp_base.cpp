@@ -3,7 +3,14 @@
 
 UDPBase::UDPBase(const Config& config) : config(config)
 {
+    crcInit();
 
+    // 检查关键类型的大小,确保内存布局和设计的一致
+    assert(sizeof(Sign) == 32);
+    assert(sizeof(PacketHeader) == 16);
+    assert(sizeof(crc) == 2);
+    assert(sizeof(Request) == 12);
+    assert(sizeof(Response) == 48);
 }
 
 UDPBase::~UDPBase()
@@ -60,6 +67,11 @@ data_t UDPBase::Packet2Payload(uint8_t* buf, size_t n)
     header.payload_size = ntohl(header.payload_size);
     header.payload_crc = ntohs(header.payload_crc);
 
+    if (header.version != 1) {
+        LOG_WARNING << "recved a packet, version = " << header.version << ", wrong version";
+        return nullptr;
+    }
+
     uint8_t *h = (uint8_t*)&header;
     for(int i = 0; i < (int)sizeof(PacketHeader)-1; i ++) {
         header.xorsum ^= h[i];
@@ -89,7 +101,6 @@ data_t UDPBase::Packet2Payload(uint8_t* buf, size_t n)
     data_t payload = CreateData();
     payload->resize(header.payload_size);
     memcpy(payload->data(), buf+sizeof(PacketHeader)+sizeof(Sign), header.payload_size);
-    LOG_DEBUG << header.payload_crc << " " << crcFast(payload->data(), payload->size());
     if (header.payload_crc != crcFast(payload->data(), payload->size())) {
         LOG_WARNING << "recved a packet, crc error";
         return nullptr;

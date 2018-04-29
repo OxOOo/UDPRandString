@@ -18,6 +18,7 @@ private:
     int sockfd;
     struct sockaddr_in servaddr;
 
+    data_t RecvPacket();
     void SendPacket(data_t data);
 };
 

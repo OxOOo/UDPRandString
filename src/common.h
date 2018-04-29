@@ -1,7 +1,6 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#undef max
 #include <memory>
 #include <vector>
 #include <cstring>
@@ -37,5 +36,47 @@ struct PacketHeader
 
     uint8_t xorsum;
 };
+
+// 请求
+struct Request
+{
+    int req_version; // 版本,必须为1
+    int req_size;
+    int req_seq; // 序列号
+};
+
+// 响应,一个任务可能会被分为若干个group,每个group内部做差错校验
+struct Response
+{
+    int res_version; // 版本,必须为1
+    int res_seq; // 
+    int res_size; // 所有响应的大小,可能会补齐
+    int res_real_size; // 真实响应的大小,不补齐
+
+    int group_count;
+    int group_id;
+    int group_curr_offset, group_curr_size;
+
+    int chunk_count;
+    int chunk_id;
+    int chunk_size;
+    int chunk_curr_offset;
+};
+
+#define NTOH_INT(ss) \
+{ \
+    int* s = (int*)&ss; \
+    for(int i = 0; i < (int)sizeof(ss)/4; i ++) { \
+        s[i] = ntohl(s[i]); \
+    } \
+}
+
+#define HTON_INT(ss) \
+{ \
+    int* s = (int*)&ss; \
+    for(int i = 0; i < (int)sizeof(ss)/4; i ++) { \
+        s[i] = ntohl(s[i]); \
+    } \
+}
 
 #endif // _COMMON_H_
